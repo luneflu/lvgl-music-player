@@ -33,7 +33,7 @@
  *  - LV_STDLIB_RTTHREAD
  *  - LV_STDLIB_CUSTOM: Custom (implemented externally)
  */
-#define LV_USE_STDLIB_MALLOC LV_STDLIB_BUILTIN
+#define LV_USE_STDLIB_MALLOC LV_STDLIB_CLIB
 
 /** String functions source
  *  Possible values:
@@ -172,7 +172,7 @@
  *  Must be at least `LV_DRAW_LAYER_SIMPLE_BUF_SIZE`, and with transformed layers large enough
  *  for the largest widget too (width x height x 4).
  */
-#define LV_DRAW_LAYER_MAX_MEMORY 0
+#define LV_DRAW_LAYER_MAX_MEMORY (16 * 1024 * 1024)
 
 #if LV_USE_OS != LV_OS_NONE
 /** If FreeType or ThorVG is enabled, it is recommended to set it to 32KB or more. */
@@ -1742,7 +1742,7 @@
 #endif /*LV_USE_QNX*/
 
 /** Open a window on a PC desktop with SDL2 and read mouse and keyboard input. */
-#define LV_USE_SDL 1
+#define LV_USE_SDL 0
 
 #if LV_USE_SDL
 /** SDL include path */
@@ -2312,13 +2312,13 @@
 #define LV_USE_ASSERT_NULL 0
 
 /** LV_ASSERT_STYLE */
-#define LV_USE_ASSERT_STYLE 1
+#define LV_USE_ASSERT_STYLE 0
 
 /** LV_ASSERT_MEM_INTEGRITY */
-#define LV_USE_ASSERT_MEM_INTEGRITY 1
+#define LV_USE_ASSERT_MEM_INTEGRITY 0
 
 /** LV_ASSERT_OBJ */
-#define LV_USE_ASSERT_OBJ 1
+#define LV_USE_ASSERT_OBJ 0
 
 /** Disable warning saying `LV_ASSERT_HANDLER_INCLUDE` is deprecated.
  *  This setting allows you to keep using old LVGL versions which rely on

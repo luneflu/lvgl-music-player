@@ -1,6 +1,5 @@
 /**
  * @file hal.h
- *
  */
 
 #ifndef LV_VSCODE_HAL_H
@@ -11,31 +10,17 @@
 extern "C" {
 #endif
 
-/*********************
- *      INCLUDES
- *********************/
-
-/*********************
- *      DEFINES
- *********************/
-
-/**********************
- *      TYPEDEFS
- **********************/
-
-/**********************
- * GLOBAL PROTOTYPES
- **********************/
+/**
+ * Initialize the HAL (display, input devices, tick).
+ * On macOS: creates a native Cocoa window.
+ */
+lv_display_t * hal_init(int32_t w, int32_t h);
 
 /**
- * Initialize the Hardware Abstraction Layer (HAL) for the LVGL graphics
- * library
+ * Run the platform event loop.
+ * On macOS: enters [NSApp run] – does not return.
  */
-lv_display_t * sdl_hal_init(int32_t w, int32_t h);
-
-/**********************
- *      MACROS
- **********************/
+void hal_run(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/
