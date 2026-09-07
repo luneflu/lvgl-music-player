@@ -58,6 +58,7 @@ static void resize_display(int32_t new_w, int32_t new_h) {
 }
 
 @interface LVGLView : NSView
+- (void)syncBackingResolution;
 @end
 
 @implementation LVGLView
@@ -69,11 +70,29 @@ static void resize_display(int32_t new_w, int32_t new_h) {
   return YES;
 }
 
+- (void)syncBackingResolution {
+  if (!gDisp)
+    return;
+  NSRect backingBounds = [self convertRectToBacking:[self bounds]];
+  CGFloat scale = [self.window backingScaleFactor];
+  if (scale < 1.0)
+    scale = 1.0;
+  if (gLayer) {
+    gLayer.contentsScale = scale;
+  }
+  uint32_t dpi = (uint32_t)(LV_DPI_DEF * scale);
+  lv_display_set_dpi(gDisp, dpi);
+  resize_display((int32_t)backingBounds.size.width, (int32_t)backingBounds.size.height);
+}
+
 - (void)setFrameSize:(NSSize)newSize {
   [super setFrameSize:newSize];
-  if (gDisp) {
-    resize_display((int32_t)newSize.width, (int32_t)newSize.height);
-  }
+  [self syncBackingResolution];
+}
+
+- (void)viewDidChangeBackingProperties {
+  [super viewDidChangeBackingProperties];
+  [self syncBackingResolution];
 }
 
 - (void)updateTrackingAreas {
@@ -92,9 +111,10 @@ static void resize_display(int32_t new_w, int32_t new_h) {
 
 - (void)updateMouse:(NSEvent *)event down:(BOOL)down {
   NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
-  NSRect b = [self bounds];
-  int32_t x = (int32_t)p.x;
-  int32_t y = (int32_t)(b.size.height - p.y);
+  NSPoint backingPoint = [self convertPointToBacking:p];
+  NSRect backingBounds = [self convertRectToBacking:[self bounds]];
+  int32_t x = (int32_t)backingPoint.x;
+  int32_t y = (int32_t)(backingBounds.size.height - backingPoint.y);
   if (x < 0)
     x = 0;
   if (y < 0)
@@ -178,25 +198,7 @@ lv_display_t *hal_init(int32_t w, int32_t h) {
     [NSApplication sharedApplication];
     [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 
-    gDispW = (w > 0) ? w : 800;
-    gDispH = (h > 0) ? h : 480;
-
-    lv_tick_set_cb(macos_tick_cb);
-
-    size_t buf_size = (size_t)gDispW * gDispH * 4;
-    gBuf = (uint8_t *)malloc(buf_size);
-    if (!gBuf)
-      return NULL;
-    memset(gBuf, 0, buf_size);
-
-    gDisp = lv_display_create(gDispW, gDispH);
-    lv_display_set_color_format(gDisp, LV_COLOR_FORMAT_ARGB8888);
-    lv_display_set_buffers(gDisp, gBuf, NULL, (uint32_t)buf_size,
-                           LV_DISPLAY_RENDER_MODE_DIRECT);
-    lv_display_set_flush_cb(gDisp, flush_cb);
-    lv_display_set_default(gDisp);
-
-    NSRect frame = NSMakeRect(0, 0, gDispW, gDispH);
+    NSRect frame = NSMakeRect(0, 0, (w > 0) ? w : 800, (h > 0) ? h : 480);
     NSWindowStyleMask style =
         NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
         NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable;
@@ -211,6 +213,32 @@ lv_display_t *hal_init(int32_t w, int32_t h) {
     LVGLView *view = [[LVGLView alloc] initWithFrame:frame];
     [view setWantsLayer:YES];
     gLayer = [CALayer layer];
+
+    NSRect backingRect = [view convertRectToBacking:frame];
+    CGFloat scale = [win backingScaleFactor];
+    if (scale < 1.0)
+      scale = 1.0;
+
+    gDispW = (int32_t)backingRect.size.width;
+    gDispH = (int32_t)backingRect.size.height;
+
+    lv_tick_set_cb(macos_tick_cb);
+
+    size_t buf_size = (size_t)gDispW * gDispH * 4;
+    gBuf = (uint8_t *)malloc(buf_size);
+    if (!gBuf)
+      return NULL;
+    memset(gBuf, 0, buf_size);
+
+    gDisp = lv_display_create(gDispW, gDispH);
+    lv_display_set_color_format(gDisp, LV_COLOR_FORMAT_ARGB8888);
+    lv_display_set_dpi(gDisp, (uint32_t)(LV_DPI_DEF * scale));
+    lv_display_set_buffers(gDisp, gBuf, NULL, (uint32_t)buf_size,
+                           LV_DISPLAY_RENDER_MODE_DIRECT);
+    lv_display_set_flush_cb(gDisp, flush_cb);
+    lv_display_set_default(gDisp);
+
+    gLayer.contentsScale = scale;
     gLayer.contentsGravity = kCAGravityResizeAspect;
     gLayer.magnificationFilter = kCAFilterNearest;
     [view setLayer:gLayer];
