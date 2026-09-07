@@ -237,6 +237,18 @@ lv_display_t *hal_init(int32_t w, int32_t h) {
 
     [NSApp activateIgnoringOtherApps:YES];
 
+    NSMenu *mainMenu = [[NSMenu alloc] init];
+    NSMenuItem *appMenuItem = [[NSMenuItem alloc] init];
+    [mainMenu addItem:appMenuItem];
+    NSMenu *appMenu = [[NSMenu alloc] init];
+    NSMenuItem *quitMenuItem =
+        [[NSMenuItem alloc] initWithTitle:@"Quit"
+                                   action:@selector(terminate:)
+                            keyEquivalent:@"q"];
+    [appMenu addItem:quitMenuItem];
+    [appMenuItem setSubmenu:appMenu];
+    [NSApp setMainMenu:mainMenu];
+
     return gDisp;
   }
 }
