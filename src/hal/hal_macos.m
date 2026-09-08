@@ -5,10 +5,21 @@
 // memory footprint.
 
 #include "hal.h"
+#include "hal_macos_menu.h"
 #include "lvgl/lvgl.h"
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
 #include <time.h>
+#include <stdlib.h>
+
+@interface LVGLWindowDelegate : NSObject <NSWindowDelegate>
+@end
+
+@implementation LVGLWindowDelegate
+- (void)windowWillClose:(NSNotification *)notification {
+  exit(0);
+}
+@end
 
 // -------------------------------------------------------------------------
 // State
@@ -207,8 +218,12 @@ lv_display_t *hal_init(int32_t w, int32_t h) {
                                                 styleMask:style
                                                   backing:NSBackingStoreBuffered
                                                     defer:NO];
+    static LVGLWindowDelegate *winDelegate = nil;
+    winDelegate = [[LVGLWindowDelegate alloc] init];
+    [win setDelegate:winDelegate];
     [win setTitle:@"LVGL Simulator"];
     [win center];
+    [win zoom:nil];
 
     LVGLView *view = [[LVGLView alloc] initWithFrame:frame];
     [view setWantsLayer:YES];
@@ -265,17 +280,7 @@ lv_display_t *hal_init(int32_t w, int32_t h) {
 
     [NSApp activateIgnoringOtherApps:YES];
 
-    NSMenu *mainMenu = [[NSMenu alloc] init];
-    NSMenuItem *appMenuItem = [[NSMenuItem alloc] init];
-    [mainMenu addItem:appMenuItem];
-    NSMenu *appMenu = [[NSMenu alloc] init];
-    NSMenuItem *quitMenuItem =
-        [[NSMenuItem alloc] initWithTitle:@"Quit"
-                                   action:@selector(terminate:)
-                            keyEquivalent:@"q"];
-    [appMenu addItem:quitMenuItem];
-    [appMenuItem setSubmenu:appMenu];
-    [NSApp setMainMenu:mainMenu];
+    macos_setup_menu();
 
     return gDisp;
   }
