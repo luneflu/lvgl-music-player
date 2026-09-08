@@ -10,7 +10,7 @@
 #include <stdio.h>
 #ifdef _MSC_VER
   #include <Windows.h>
-#else
+#elif !defined(__APPLE__)
   #include <unistd.h>
   #include <pthread.h>
 #endif

@@ -100,7 +100,11 @@
  *  - LV_OS_SDL2
  *  - LV_OS_CUSTOM
  */
+#if defined(_WIN32)
+#define LV_USE_OS LV_OS_WINDOWS
+#else
 #define LV_USE_OS LV_OS_NONE
+#endif
 
 #if LV_USE_OS == LV_OS_CUSTOM
 /** Custom OS include header */
@@ -1859,7 +1863,7 @@
 
 #if LV_USE_OS == LV_OS_WINDOWS
 /** Open a window with the Win32 API and read mouse, touch, keyboard and mousewheel input. */
-#define LV_USE_WINDOWS 0
+#define LV_USE_WINDOWS 1
 
 #endif /*LV_USE_OS == LV_OS_WINDOWS*/
 
