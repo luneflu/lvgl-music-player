@@ -131,8 +131,8 @@
  * RENDERING CONFIGURATION
  *============================================================================*/
 
-/** Color depth: 1 (I1), 8 (L8), 16 (RGB565), 24 (RGB888), 32 (XRGB8888) */
-#define LV_COLOR_DEPTH 32
+/** Color format: LV_COLOR_FORMAT_XRGB8888, LV_COLOR_FORMAT_RGB888, LV_COLOR_FORMAT_RGB565, etc. */
+#define LV_COLOR_FORMAT_DEFAULT LV_COLOR_FORMAT_XRGB8888
 
 /** 0: no adjustment, get the integer part of the result (round down)
  *  64: round up from x.75
