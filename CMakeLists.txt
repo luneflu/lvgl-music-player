@@ -161,13 +161,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(lvgl PRIVATE
         -pedantic-errors
         -Wall
-        -Wclobbered
         -Wdeprecated
         -Wdouble-promotion
         -Wempty-body
         -Wextra
         -Wformat-security
-        -Wmaybe-uninitialized
         # -Wmissing-prototypes
         -Wpointer-arith
         -Wmultichar
