@@ -33,6 +33,7 @@ static bool gMouseDown = false;
 static uint8_t *gBuf = NULL;
 static lv_display_t *gDisp = NULL;
 static CALayer *gLayer = nil;
+static CGColorSpaceRef gColorSpace = NULL;
 
 // -------------------------------------------------------------------------
 // Tick
@@ -165,14 +166,13 @@ static void dummy_release(void *info, const void *data, size_t size) {
 static void flush_cb(lv_display_t *disp, const lv_area_t *area,
                      uint8_t *px_map) {
   if (gLayer && gBuf) {
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGDataProviderRef provider = CGDataProviderCreateWithData(
         NULL, gBuf, gDispW * gDispH * 4, dummy_release);
 
     // LVGL ARGB8888 in little-endian is BGRA bytes (kCGBitmapByteOrder32Little
     // | kCGImageAlphaPremultipliedFirst)
     CGImageRef image = CGImageCreate(
-        gDispW, gDispH, 8, 32, gDispW * 4, colorSpace,
+        gDispW, gDispH, 8, 32, gDispW * 4, gColorSpace,
         kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst, provider,
         NULL, false, kCGRenderingIntentDefault);
 
@@ -183,7 +183,6 @@ static void flush_cb(lv_display_t *disp, const lv_area_t *area,
 
     CGImageRelease(image);
     CGDataProviderRelease(provider);
-    CGColorSpaceRelease(colorSpace);
   }
   lv_display_flush_ready(disp);
 }
@@ -238,6 +237,8 @@ lv_display_t *hal_init(int32_t w, int32_t h) {
     gDispH = (int32_t)backingRect.size.height;
 
     lv_tick_set_cb(macos_tick_cb);
+
+    gColorSpace = CGColorSpaceCreateDeviceRGB();
 
     size_t buf_size = (size_t)gDispW * gDispH * 4;
     gBuf = (uint8_t *)malloc(buf_size);
