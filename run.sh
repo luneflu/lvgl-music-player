@@ -20,8 +20,8 @@ cd "$BUILD_DIR"
 echo "Configuring CMake..."
 cmake ..
 
-echo "Building project with Make..."
-make -j"$(sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)"
+echo "Building project..."
+cmake --build . --parallel "$(sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)"
 
 echo "Build Succeeded!"
 
