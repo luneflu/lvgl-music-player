@@ -64,7 +64,9 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
 
-set(MAIN_SOURCES src/mouse_cursor_icon.c)
+set(MAIN_SOURCES src/mouse_cursor_icon.c src/utils/path.c src/db/db.c)
+find_package(SQLite3 REQUIRED)
+include_directories(${SQLite3_INCLUDE_DIRS})
 if(APPLE)
     list(APPEND MAIN_SOURCES src/hal/hal_macos.m src/hal/hal_macos_menu.m)
     set(MAIN_LIBS lvgl lvgl::examples lvgl::demos lvgl::thorvg)
@@ -85,7 +87,7 @@ endif()
 
 
 if(NOT MSVC)
-    list(APPEND MAIN_LIBS m pthread)
+    list(APPEND MAIN_LIBS m pthread ${SQLite3_LIBRARIES})
 endif()
 
 # Custom target to run the executable
