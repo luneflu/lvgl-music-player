@@ -21,6 +21,7 @@
 
 #include "hal/hal.h"
 #include "db/db.h"
+#include "scanner/scanner.h"
 #include "ui/ui.c"
 
 #if LV_USE_OS != LV_OS_FREERTOS
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
   (void)argv;
 
   db_init(NULL);
+  scanner_scan_and_save(g_db, "/Users/alvindimas05/Music/The Meaning of Life");
 
   lv_init();
 

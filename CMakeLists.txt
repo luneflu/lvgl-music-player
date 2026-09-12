@@ -64,9 +64,13 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
 
-set(MAIN_SOURCES src/mouse_cursor_icon.c src/utils/path.c src/db/db.c)
+set(MAIN_SOURCES src/mouse_cursor_icon.c src/utils/path.c src/db/db.c src/metadata/metadata.c src/metadata/metadata_cover.cpp src/scanner/scanner.c)
 find_package(SQLite3 REQUIRED)
-include_directories(${SQLite3_INCLUDE_DIRS})
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(TAGLIB REQUIRED taglib)
+pkg_check_modules(TAGLIB_C REQUIRED taglib_c)
+include_directories(${SQLite3_INCLUDE_DIRS} ${TAGLIB_INCLUDE_DIRS} ${TAGLIB_C_INCLUDE_DIRS})
+link_directories(${TAGLIB_LIBRARY_DIRS} ${TAGLIB_C_LIBRARY_DIRS})
 if(APPLE)
     list(APPEND MAIN_SOURCES src/hal/hal_macos.m src/hal/hal_macos_menu.m)
     set(MAIN_LIBS lvgl lvgl::examples lvgl::demos lvgl::thorvg)
@@ -87,7 +91,9 @@ endif()
 
 
 if(NOT MSVC)
-    list(APPEND MAIN_LIBS m pthread ${SQLite3_LIBRARIES})
+    list(APPEND MAIN_LIBS m pthread ${SQLite3_LIBRARIES} ${TAGLIB_LIBRARIES} ${TAGLIB_C_LIBRARIES})
+else()
+    list(APPEND MAIN_LIBS ${TAGLIB_LIBRARIES} ${TAGLIB_C_LIBRARIES})
 endif()
 
 # Custom target to run the executable
