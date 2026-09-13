@@ -840,12 +840,12 @@
 /** Avoids repeatedly opening and decoding the same images, at the cost of RAM.
  *  Of little benefit with only the built-in image formats.
  */
-#define LV_CACHE_DEF_SIZE 0
+#define LV_CACHE_DEF_SIZE (32 * 1024 * 1024)
 
 /** Avoids repeatedly reading image headers, at the cost of RAM.
  *  Of little benefit with only the built-in image formats.
  */
-#define LV_IMAGE_HEADER_CACHE_DEF_CNT 0
+#define LV_IMAGE_HEADER_CACHE_DEF_CNT 64
 
 /** Decoder for LVGL's run-length encoded binary image format. */
 #define LV_USE_RLE 1
@@ -2016,11 +2016,11 @@
 #endif /*LV_USE_FS_FROGFS*/
 
 /** Reach data already in memory through the lv_fs API, without a real file system. */
-#define LV_USE_FS_MEMFS 0
+#define LV_USE_FS_MEMFS 1
 
 #if LV_USE_FS_MEMFS
 /** Drive letter for memfs (65 = 'A', 0 = disabled) */
-#define LV_FS_MEMFS_LETTER 0
+#define LV_FS_MEMFS_LETTER 'M'
 
 #endif /*LV_USE_FS_MEMFS*/
 

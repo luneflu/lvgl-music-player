@@ -270,7 +270,7 @@ lv_display_t *hal_init(int32_t w, int32_t h) {
     lv_indev_set_display(indev, gDisp);
     lv_indev_set_group(indev, lv_group_get_default());
 
-    NSTimer *timer = [NSTimer timerWithTimeInterval:0.005
+    NSTimer *timer = [NSTimer timerWithTimeInterval:0.001
                                             repeats:YES
                                               block:^(NSTimer *_Nonnull t) {
                                                 @autoreleasepool {

@@ -22,7 +22,7 @@
 #include "hal/hal.h"
 #include "db/db.h"
 #include "scanner/scanner.h"
-#include "ui/ui.c"
+#include "ui/ui.h"
 
 #if LV_USE_OS != LV_OS_FREERTOS
 
@@ -38,8 +38,8 @@ int main(int argc, char **argv)
 
   hal_init(800, 480);
 
-  lv_demo_widgets();
-  // ui_example();
+  // lv_demo_widgets();
+  ui_example();
 
 #ifdef __APPLE__
   /* On macOS the Cocoa run-loop drives lv_timer_handler via NSTimer */

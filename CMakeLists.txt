@@ -64,7 +64,7 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
 
-set(MAIN_SOURCES src/mouse_cursor_icon.c src/utils/path.c src/db/db.c src/metadata/metadata.c src/metadata/metadata_cover.cpp src/scanner/scanner.c)
+set(MAIN_SOURCES src/mouse_cursor_icon.c src/utils/path.c src/db/db.c src/metadata/metadata.c src/metadata/metadata_cover.cpp src/scanner/scanner.c src/ui/album_list_model.c src/ui/album_list_view.c src/ui/ui.c)
 find_package(SQLite3 REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(TAGLIB REQUIRED taglib)
